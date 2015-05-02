@@ -20,6 +20,10 @@ class Pds3Label(object):
         self.parse_label()
 
     def parse_label(self):
+        """Parses the label in self.infile with the ANTLR visitor"""
+        # TODO: make this work with attached labels as well as
+        # stand alone labels.
+        # Save the RAW full text of the label to self._raw
         input_stream = FileStream(self.infile)
         lexer = ODLv21Lexer(input_stream)
         tokens = CommonTokenStream(lexer)
@@ -29,3 +33,4 @@ class Pds3Label(object):
         self._parse_tree = parse_tree
         visitor = Pds3LabelVisitor()
         visitor.visit(parse_tree)
+        self.label_dict = visitor.label_dict

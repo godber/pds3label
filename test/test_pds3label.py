@@ -18,6 +18,10 @@ class TestPds3label(object):
     def teardown_class(cls):
         pass
 
-    def test_file(self):
-        l = Pds3Label('test/data/tiny2.lbl')
-        assert l.infile == 'test/data/tiny2.lbl'
+    def test_tiny2(self):
+        label = Pds3Label('test/data/tiny2.lbl')
+        assert label.infile == 'test/data/tiny2.lbl'
+        assert label.label_dict['PDS_VERSION_ID'] == 'PDS3'
+        assert label.label_dict['RECORD_TYPE'] == 'STREAM'
+        assert label.label_dict['RECORD_BYTES'] == 89
+        assert label.label_dict['FILE_RECORDS'] == 20
