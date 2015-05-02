@@ -13,6 +13,37 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
+PY26_DEPS = [
+    "ordereddict",
+    "antlr4-python2-runtime==4.5",
+]
+
+PY27_DEPS = [
+    "antlr4-python2-runtime==4.5",
+]
+
+PY33_DEPS = [
+    "enum34",
+    "antlr4-python3-runtime==4.5",
+]
+
+PY34_DEPS = [
+    "antlr4-python3-runtime==4.5",
+]
+
+
+def python_version_specific_deps():
+    """Returns the Python Version Specific Dependencies"""
+    if sys.version.startswith("2.6"):
+        return PY26_DEPS
+    elif sys.version.startswith("2.7"):
+        return PY27_DEPS
+    elif sys.version.startswith("3.3"):
+        return PY33_DEPS
+    elif sys.version.startswith("3.4"):
+        return PY34_DEPS
+
+
 readme = open('README.rst').read()
 doclink = """
 Documentation
@@ -34,10 +65,7 @@ setup(
     ],
     package_dir={'pds3label': 'pds3label'},
     include_package_data=True,
-    install_requires=[
-        'antlr4-python2-runtime==4.5',
-        'antlr4-python3-runtime==4.5',
-    ],
+    install_requires=python_version_specific_deps(),
     license='MIT',
     zip_safe=False,
     keywords='pds3label',
