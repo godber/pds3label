@@ -1,4 +1,10 @@
-from collections import OrderedDict
+from __future__ import print_function
+
+try:
+    from collections import OrderedDict
+except:
+    # supporting py 2.6
+    from ordereddict import OrderedDict
 
 from .vendor.pds3_python.ODLv21Visitor import ODLv21Visitor
 
@@ -13,7 +19,7 @@ class Pds3LabelVisitor(ODLv21Visitor):
 
     def visitAssignment_stmt(self, ctx):
         val = self.visitChildren(ctx)
-        print "%s = %s" % (ctx.IDENTIFIER().getText(), val)
+        print("%s = %s" % (ctx.IDENTIFIER().getText(), val))
         self.label_dict[ctx.IDENTIFIER().getText()] = val
         return val
 
