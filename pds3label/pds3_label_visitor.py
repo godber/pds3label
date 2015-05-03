@@ -1,4 +1,5 @@
 from __future__ import print_function
+import re
 
 try:
     from collections import OrderedDict
@@ -40,8 +41,25 @@ class Pds3LabelVisitor(ODLv21Visitor):
 
     def visitScalarString(self, ctx):
         ODLv21Visitor.visitScalarString(self, ctx)
-        return ctx.STRING().getText()
+        return Pds3LabelVisitor._clean_string(ctx.STRING().getText())
 
     def visitScalarSymbol(self, ctx):
         ODLv21Visitor.visitScalarSymbol(self, ctx)
-        return ctx.SYMBOL_STRING().getText()
+        return Pds3LabelVisitor._clean_symbol(ctx.SYMBOL_STRING().getText())
+
+    @classmethod
+    def _clean_symbol(cls, instring):
+        """Strips the single quotes off of the symbol"""
+        instring = re.sub(r"'", '', instring)
+        return instring
+
+    @classmethod
+    def _clean_string(cls, instring):
+        """Cleans up the provided string, including the following things:
+            * Strips off double quotes
+            * Replaces all whitespace (including newlines) with a single space.
+        """
+        instring = re.sub(r'"', '', instring)          # strip "
+        instring = re.sub(r"-\s*\n\s+", '', instring)  # remove hyphen and its trailing whitespace
+        instring = re.sub(r"\s+", ' ', instring)       # replace whitespace with single space
+        return instring
