@@ -18,6 +18,9 @@ develop-eggs
 lib
 lib64
 
+# Ignore peoples virtualenvs
+pds3label_venv/
+
 # Installer logs
 pip-log.txt
 
