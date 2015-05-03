@@ -25,3 +25,10 @@ class TestPds3label(object):
         assert label.label_dict['RECORD_TYPE'] == 'STREAM'
         assert label.label_dict['RECORD_BYTES'] == 89
         assert label.label_dict['FILE_RECORDS'] == 20
+
+    def test_string2(self):
+        label = Pds3Label('test/data/string2.lbl')
+        assert label.infile == 'test/data/string2.lbl'
+        assert label.label_dict['INTEGER1'] == 1
+        assert label.label_dict['FLOAT'] == 2.3
+        assert label.label_dict['COMMENT1'] == "THING TEST"
