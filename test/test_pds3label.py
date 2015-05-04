@@ -44,3 +44,32 @@ class TestPds3label(object):
         assert label['MULTILINE'] == 'This is a test of the emergency broadcasting system.'
         assert label['HYPHENATED'] == 'The planet Jupiter is very big'
         assert label['EMPTY_STRING'] == ''
+
+    @pytest.mark.parametrize("infile,expected", [
+        ('test/data/group1.lbl', 'test/data/group1.lbl'),
+        ('test/data/group2.lbl', 'test/data/group2.lbl'),
+        ('test/data/group3.lbl', 'test/data/group3.lbl'),
+    ])
+    def test_group1(self, infile, expected):
+        label = Pds3Label(infile)
+        assert label.infile == expected
+        assert label['IMAGE']['_type'] == 'OBJECT'
+        assert label['IMAGE']['MAXIMUM'] == 255
+        assert label['IMAGE']['STANDARD_DEVIATION'] == 16.97019
+        assert label['IMAGE']['CHECKSUM'] == 25549531
+        assert label['SHUTTER_TIMES']['_type'] == 'GROUP'
+        assert label['SHUTTER_TIMES']['START'] == 1234567
+        assert label['SHUTTER_TIMES']['STOP'] == 2123232
+
+    def test_group4_non_group_elements(self):
+        label = Pds3Label('test/data/group4.lbl')
+        assert label.infile == 'test/data/group4.lbl'
+        assert label['IMAGE']['_type'] == 'OBJECT'
+        assert label['IMAGE']['MAXIMUM'] == 255
+        assert label['IMAGE']['STANDARD_DEVIATION'] == 16.97019
+        assert label['IMAGE']['CHECKSUM'] == 25549531
+        assert label['SHUTTER_TIMES']['_type'] == 'GROUP'
+        assert label['SHUTTER_TIMES']['START'] == 1234567
+        assert label['SHUTTER_TIMES']['STOP'] == 2123232
+        assert label['FILENAME'] == 'ImageFile-00112.IMG'
+        assert label['WINDOW'] == 12.455

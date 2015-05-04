@@ -43,4 +43,4 @@ class Pds3Label(OrderedDict):
         self._parse_tree = parse_tree
         visitor = Pds3LabelVisitor()
         visitor.visit(parse_tree)
-        return visitor.label_dict
+        return visitor.root_dict

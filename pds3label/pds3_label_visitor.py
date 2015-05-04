@@ -15,13 +15,16 @@ class Pds3LabelVisitor(ODLv21Visitor):
 
     def __init__(self):
         super(Pds3LabelVisitor, self).__init__()
-        self.comment_num = 0
-        self.label_dict = OrderedDict()
+        # root_dict is the top level dictionary
+        self.root_dict = OrderedDict()
+        # current_dict is used to keep track of the nesting level for
+        # assignments.
+        self.current_dict = self.root_dict
 
     def visitAssignment_stmt(self, ctx):
         val = self.visitChildren(ctx)
         print("%s = %s" % (ctx.IDENTIFIER().getText(), val))
-        self.label_dict[ctx.IDENTIFIER().getText()] = val
+        self.current_dict[ctx.IDENTIFIER().getText()] = val
         return val
 
     def visitValue(self, ctx):
@@ -46,6 +49,45 @@ class Pds3LabelVisitor(ODLv21Visitor):
     def visitScalarSymbol(self, ctx):
         ODLv21Visitor.visitScalarSymbol(self, ctx)
         return Pds3LabelVisitor._clean_symbol(ctx.SYMBOL_STRING().getText())
+
+    def visitObject_stmt(self, ctx):
+        object_identifier = Pds3LabelVisitor._get_object_identifier(ctx)
+        object_dict = OrderedDict([('_type', 'OBJECT')])
+        self.current_dict[object_identifier] = object_dict
+        self.current_dict = object_dict
+
+        w = self.visitChildren(ctx)
+
+        # TODO: I think the line below implicitly assumes single nesting
+        self.current_dict = self.root_dict
+        return w
+
+    def visitGroup_stmt(self, ctx):
+        group_identifier = Pds3LabelVisitor._get_object_identifier(ctx)
+        group_dict = OrderedDict([('_type', 'GROUP')])
+        self.current_dict[group_identifier] = group_dict
+        self.current_dict = group_dict
+
+        w = self.visitChildren(ctx)
+
+        self.current_dict = self.root_dict
+        return w
+
+    @classmethod
+    def _get_object_identifier(cls, ctx):
+        """This method handles the unanticipated list returned by the
+        object.IDENTIFIER().  It will return the text from a SINGLE
+        identifier
+        """
+        identifiers = []
+        for identifier in ctx.IDENTIFIER():
+            identifiers.append(identifier.getText())
+
+        if len(set(identifiers)) != 1:
+            print("WARNING Object Identifiers Don't Match")
+            print(set(identifiers))
+
+        return identifiers[0]
 
     @classmethod
     def _clean_symbol(cls, instring):
