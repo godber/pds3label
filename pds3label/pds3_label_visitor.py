@@ -8,6 +8,7 @@ except:
     from ordereddict import OrderedDict
 
 from .vendor.pds3_python.ODLv21Visitor import ODLv21Visitor
+from .types import BasedInteger
 
 
 class Pds3LabelVisitor(ODLv21Visitor):
@@ -37,6 +38,10 @@ class Pds3LabelVisitor(ODLv21Visitor):
     def visitScalarInteger(self, ctx):
         ODLv21Visitor.visitScalarInteger(self, ctx)
         return int(ctx.INTEGER().getText())
+
+    def visitScalarBasedInteger(self, ctx):
+        ODLv21Visitor.visitScalarBasedInteger(self, ctx)
+        return BasedInteger(ctx.BASED_INTEGER().getText())
 
     def visitScalarIdentifier(self, ctx):
         ODLv21Visitor.visitScalarIdentifier(self, ctx)
