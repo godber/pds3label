@@ -8,7 +8,6 @@ def test_based_integer():
     f = 'test/data/simple_image_1.lbl'
     label = Pds3Label(f)
     assert label.infile == f
-    print label
     assert label['RECORD_TYPE'] == 'FIXED_LENGTH'
     assert label['RECORD_BYTES'] == 824
     assert label['LABEL_RECORDS'] == 1
